@@ -29,8 +29,8 @@ CAPMONSTER_API_KEY = os.environ.get('CAPMONSTER_API_KEY', '')
 URL_MOVILIDAD = "https://webfenix.movilidadbogota.gov.co/#/consulta-pagos"
 
 TIPO_IDENTIFICACION_MAP = {
-    'CEDULA': 'Cedula de ciudadania',
-    'CEDULA_EXTRANJERIA': 'Cedula de extranjeria',
+    'CEDULA': 'C\u00e9dula de ciudadan\u00eda',
+    'CEDULA_EXTRANJERIA': 'C\u00e9dula de extranjer\u00eda',
     'NIT': 'NIT',
     'PASAPORTE': 'Pasaporte',
 }
@@ -500,9 +500,16 @@ def select_document_type(page, tipo_identificacion: str) -> bool:
                 log(f"  Seleccionado: {label_text}")
                 return True
             else:
-                log("  Opcion no encontrada en mat-select, intentando siguiente estrategia")
+                log("  Opcion no encontrada en mat-select, cerrando overlay...")
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(500)
     except Exception as e:
         log(f"  mat-select fallo: {str(e)}")
+        try:
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
 
     # Estrategia 3: select nativo HTML
     try:
